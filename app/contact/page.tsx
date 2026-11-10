@@ -1,19 +1,50 @@
-"use client";
-
-import { useState } from "react";
-import Link from "next/link";
+import { Suspense } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SubmitButton from "@/components/SubmitButton";
+import { submitInquiry } from "@/app/auth/actions";
 
-export default function ContactPage() {
-  const [submitted, setSubmitted] = useState(false);
+type Props = {
+  searchParams: Promise<{ success?: string; error?: string }>;
+};
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // Handle form submission logic here
-    setSubmitted(true);
-  };
+// Extracted component to safely await and display URL search parameters
+async function ContactFeedbackAlert({
+  searchParams,
+}: {
+  searchParams: Props["searchParams"];
+}) {
+  const params = await searchParams;
 
+  if (params.success) {
+    return (
+      <div className="mb-6 rounded-xl bg-emerald-500/10 border border-emerald-500/30 p-4 text-center space-y-1">
+        <div className="w-10 h-10 bg-emerald-500 text-white rounded-full flex items-center justify-center mx-auto text-lg font-bold mb-2">
+          ✓
+        </div>
+        <h3 className="text-base font-bold text-emerald-900">
+          Message Sent Successfully!
+        </h3>
+        <p className="text-xs text-emerald-800">
+          Thank you for reaching out to PSA Educational. Our administrative team
+          will get back to you shortly.
+        </p>
+      </div>
+    );
+  }
+
+  if (params.error) {
+    return (
+      <div className="mb-6 rounded-xl bg-red-500/10 border border-red-500/20 p-3 text-center text-sm text-red-600 font-medium">
+        {decodeURIComponent(params.error)}
+      </div>
+    );
+  }
+
+  return null;
+}
+
+export default function ContactPage({ searchParams }: Props) {
   return (
     <div className="flex flex-col min-h-screen bg-[#e9edde] text-[#2b303a] font-sans">
       {/* Reusable Navbar Component */}
@@ -97,7 +128,7 @@ export default function ContactPage() {
               </div>
             </div>
 
-            {/* Right Column: Contact Form */}
+            {/* Right Column: Server-Driven Contact Form */}
             <div className="bg-white rounded-2xl p-8 shadow-xl border border-[#2b303a]/10">
               <h2 className="text-2xl font-extrabold text-[#2b303a]">
                 Send Us a Message
@@ -107,116 +138,99 @@ export default function ContactPage() {
                 back to you shortly.
               </p>
 
-              {submitted ? (
-                <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/30 p-6 text-center space-y-2">
-                  <div className="w-12 h-12 bg-emerald-500 text-white rounded-full flex items-center justify-center mx-auto text-xl font-bold">
-                    ✓
-                  </div>
-                  <h3 className="text-lg font-bold text-emerald-800">
-                    Message Sent!
-                  </h3>
-                  <p className="text-sm text-emerald-700">
-                    Thank you for contacting PSA Educational. We will respond to
-                    your inquiry soon.
-                  </p>
-                  <button
-                    onClick={() => setSubmitted(false)}
-                    className="mt-4 text-xs font-semibold text-[#9c0d38] hover:underline"
+              {/* Feedback Alert for Success / Error */}
+              <Suspense fallback={null}>
+                <ContactFeedbackAlert searchParams={searchParams} />
+              </Suspense>
+
+              <form action={submitInquiry} className="space-y-5">
+                <div>
+                  <label
+                    htmlFor="fullName"
+                    className="mb-2 block text-sm font-semibold text-[#2b303a]"
                   >
-                    Send another message
-                  </button>
+                    Full Name
+                  </label>
+                  <input
+                    id="fullName"
+                    name="fullName"
+                    type="text"
+                    required
+                    className="w-full rounded-lg border border-[#2b303a]/20 bg-white px-4 py-3 text-[#2b303a] placeholder-[#2b303a]/40 outline-none focus:border-[#9c0d38] focus:ring-2 focus:ring-[#9c0d38]/20 transition-all duration-200"
+                    placeholder="Your full name"
+                  />
                 </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  <div>
-                    <label
-                      htmlFor="name"
-                      className="mb-2 block text-sm font-semibold text-[#2b303a]"
-                    >
-                      Full Name
-                    </label>
-                    <input
-                      id="name"
-                      name="name"
-                      type="text"
-                      required
-                      className="w-full rounded-lg border border-[#2b303a]/20 bg-white px-4 py-3 text-[#2b303a] placeholder-[#2b303a]/40 outline-none focus:border-[#9c0d38] focus:ring-2 focus:ring-[#9c0d38]/20 transition-all duration-200"
-                      placeholder="Your full name"
-                    />
-                  </div>
 
-                  <div>
-                    <label
-                      htmlFor="email"
-                      className="mb-2 block text-sm font-semibold text-[#2b303a]"
-                    >
-                      Email Address
-                    </label>
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      required
-                      className="w-full rounded-lg border border-[#2b303a]/20 bg-white px-4 py-3 text-[#2b303a] placeholder-[#2b303a]/40 outline-none focus:border-[#9c0d38] focus:ring-2 focus:ring-[#9c0d38]/20 transition-all duration-200"
-                      placeholder="you@example.com"
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="subject"
-                      className="mb-2 block text-sm font-semibold text-[#2b303a]"
-                    >
-                      Program of Interest
-                    </label>
-                    <select
-                      id="subject"
-                      name="subject"
-                      required
-                      defaultValue=""
-                      className="w-full rounded-lg border border-[#2b303a]/20 bg-white px-4 py-3 text-[#2b303a] outline-none focus:border-[#9c0d38] focus:ring-2 focus:ring-[#9c0d38]/20 transition-all duration-200"
-                    >
-                      <option value="" disabled>
-                        Select a program
-                      </option>
-                      <option value="UTME">UTME Prep</option>
-                      <option value="SSCE">SSCE Prep</option>
-                      <option value="IT">IT &amp; Computer Training</option>
-                      <option value="Literacy">Adult Literacy</option>
-                      <option value="General">General Inquiry</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="message"
-                      className="mb-2 block text-sm font-semibold text-[#2b303a]"
-                    >
-                      Message
-                    </label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      rows={4}
-                      required
-                      className="w-full rounded-lg border border-[#2b303a]/20 bg-white px-4 py-3 text-[#2b303a] placeholder-[#2b303a]/40 outline-none focus:border-[#9c0d38] focus:ring-2 focus:ring-[#9c0d38]/20 transition-all duration-200 resize-none"
-                      placeholder="How can we help you?"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full rounded-lg bg-[#9c0d38] py-3.5 font-semibold text-white shadow-md hover:bg-[#2b303a] focus:outline-none focus:ring-2 focus:ring-[#9c0d38] transition-all duration-200"
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="mb-2 block text-sm font-semibold text-[#2b303a]"
                   >
-                    Submit Inquiry
-                  </button>
-                </form>
-              )}
+                    Email Address
+                  </label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    className="w-full rounded-lg border border-[#2b303a]/20 bg-white px-4 py-3 text-[#2b303a] placeholder-[#2b303a]/40 outline-none focus:border-[#9c0d38] focus:ring-2 focus:ring-[#9c0d38]/20 transition-all duration-200"
+                    placeholder="you@example.com"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="program"
+                    className="mb-2 block text-sm font-semibold text-[#2b303a]"
+                  >
+                    Program of Interest
+                  </label>
+                  <select
+                    id="program"
+                    name="program"
+                    required
+                    defaultValue=""
+                    className="w-full rounded-lg border border-[#2b303a]/20 bg-white px-4 py-3 text-[#2b303a] outline-none focus:border-[#9c0d38] focus:ring-2 focus:ring-[#9c0d38]/20 transition-all duration-200"
+                  >
+                    <option value="" disabled>
+                      Select a program
+                    </option>
+                    <option value="UTME">UTME Prep</option>
+                    <option value="SSCE">SSCE Prep</option>
+                    <option value="IT">IT &amp; Computer Training</option>
+                    <option value="Literacy">Adult Literacy</option>
+                    <option value="General">General Inquiry</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="message"
+                    className="mb-2 block text-sm font-semibold text-[#2b303a]"
+                  >
+                    Message
+                  </label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    rows={4}
+                    required
+                    className="w-full rounded-lg border border-[#2b303a]/20 bg-white px-4 py-3 text-[#2b303a] placeholder-[#2b303a]/40 outline-none focus:border-[#9c0d38] focus:ring-2 focus:ring-[#9c0d38]/20 transition-all duration-200 resize-none"
+                    placeholder="How can we help you?"
+                  />
+                </div>
+
+                <SubmitButton
+                  text="Submit Inquiry"
+                  loadingText="Submitting..."
+                />
+              </form>
             </div>
           </div>
         </div>
       </main>
 
+      {/* Reusable Footer Component */}
       <Footer />
     </div>
   );

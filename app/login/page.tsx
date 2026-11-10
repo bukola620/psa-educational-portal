@@ -3,6 +3,7 @@ import { login } from "@/app/auth/actions";
 import { Suspense } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SubmitButton from "@/components/SubmitButton";
 
 type Props = {
   searchParams: Promise<{
@@ -114,12 +115,7 @@ export default function LoginPage({ searchParams }: Props) {
               />
             </div>
 
-            <button
-              type="submit"
-              className="w-full rounded-lg bg-[#9c0d38] py-3.5 font-semibold text-white shadow-md hover:bg-[#2b303a] focus:outline-none focus:ring-2 focus:ring-[#9c0d38] transition-all duration-200"
-            >
-              Sign in
-            </button>
+            <SubmitButton text="Sign In" loadingText="Signing in..." />
           </form>
 
           <p className="mt-6 text-center text-sm text-[#2b303a]/75">

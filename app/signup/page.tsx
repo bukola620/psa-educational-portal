@@ -3,6 +3,7 @@ import { signup } from "@/app/auth/actions";
 import { Suspense } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SubmitButton from "@/components/SubmitButton";
 
 type Props = {
   searchParams: Promise<{ error?: string }>;
@@ -23,10 +24,19 @@ async function SignupErrorAlert({
       role="alert"
       className="mt-4 rounded-lg bg-red-500/10 border border-red-500/20 p-3 text-sm text-red-600 font-medium"
     >
-      Please check your details and try again. Your password must contain at
-      least 8 characters.
+      {decodeURIComponent(params.error)}
     </p>
   );
+
+  // return (
+  //   <p
+  //     role="alert"
+  //     className="mt-4 rounded-lg bg-red-500/10 border border-red-500/20 p-3 text-sm text-red-600 font-medium"
+  //   >
+  //     Please check your details and try again. Your password must contain at
+  //     least 8 characters.
+  //   </p>
+  // );
 }
 
 export default function SignupPage({ searchParams }: Props) {
@@ -199,12 +209,10 @@ export default function SignupPage({ searchParams }: Props) {
               />
             </div>
 
-            <button
-              type="submit"
-              className="w-full rounded-lg bg-[#9c0d38] py-3.5 font-semibold text-white shadow-md hover:bg-[#2b303a] focus:outline-none focus:ring-2 focus:ring-[#9c0d38] transition-all duration-200"
-            >
-              Create account
-            </button>
+            <SubmitButton
+              text="Create account"
+              loadingText="Creating account..."
+            />
           </form>
 
           <p className="mt-6 text-center text-sm text-[#2b303a]/75">

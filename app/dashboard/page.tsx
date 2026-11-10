@@ -24,7 +24,7 @@ async function DashboardContent() {
   const phone = user.user_metadata?.phone || "Not provided";
   const gender = user.user_metadata?.gender || "Not specified";
   const program = user.user_metadata?.program
-    ? user.user_metadata.purpose.toUpperCase()
+    ? user.user_metadata.program.toUpperCase()
     : "GENERAL";
 
   return (
