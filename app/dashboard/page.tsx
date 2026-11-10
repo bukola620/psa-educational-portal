@@ -23,7 +23,7 @@ async function DashboardContent() {
   const email = user.email;
   const phone = user.user_metadata?.phone || "Not provided";
   const gender = user.user_metadata?.gender || "Not specified";
-  const purpose = user.user_metadata?.purpose
+  const program = user.user_metadata?.program
     ? user.user_metadata.purpose.toUpperCase()
     : "GENERAL";
 
@@ -34,7 +34,7 @@ async function DashboardContent() {
         <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-[#9c0d38]/20 to-transparent pointer-events-none" />
 
         <span className="inline-block rounded-full bg-[#9c0d38]/30 px-3 py-1 text-xs font-semibold text-[#e9edde] uppercase tracking-wider border border-[#9c0d38]/40">
-          Student Portal — Track: {purpose}
+          Student Portal — Track: {program}
         </span>
 
         <h2 className="mt-4 text-3xl font-bold text-[#e9edde]">
@@ -59,9 +59,9 @@ async function DashboardContent() {
           </div>
           <div>
             <span className="block text-[#e9edde]/60 text-xs">
-              Registration Purpose
+              Registration Program
             </span>
-            <span className="font-semibold text-[#e9edde]">{purpose}</span>
+            <span className="font-semibold text-[#e9edde]">{program}</span>
           </div>
         </div>
       </section>
